@@ -1,6 +1,6 @@
 {
   "name": "irc-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "IRC client logic using irc-protocol for communication",
   "main": "index.js",
   "dependencies": {
