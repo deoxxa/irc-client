@@ -1,0 +1,20 @@
+{
+  "name": "irc-client",
+  "version": "0.0.0",
+  "description": "IRC client logic using irc-protocol for communication",
+  "main": "index.js",
+  "dependencies": {
+    "irc-protocol": "~0.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/deoxxa/irc-client.git"
+  },
+  "keywords": [
+    "irc",
+    "network",
+    "client"
+  ],
+  "author": "Conrad Pankoff <deoxxa@fknsrs.biz> (http://www.fknsrs.biz/)",
+  "license": "BSD"
+}
