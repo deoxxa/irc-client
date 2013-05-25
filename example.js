@@ -1,18 +1,10 @@
 #!/usr/bin/env node
 
-var fs = require("fs"),
-    net = require("net"),
-    path = require("path");
+var net = require("net");
 
-function ip_to_long(ip) {
-  return ip.split(".").reduce(function(i, v) {
-    return i * 256 + parseInt(v, 10);
-  }, 0);
-}
+var Client = require("./");
 
-var Client = require("./index");
-
-var XDCC = function XDCC() {
+var Greeter = function Greeter() {
   Client.apply(this, arguments);
 
   this.regexes_private = [];
@@ -38,46 +30,36 @@ var XDCC = function XDCC() {
 
   this.transfers = [];
 };
-XDCC.prototype = Object.create(Client.prototype, {properties: {constructor: XDCC}});
+Greeter.prototype = Object.create(Client.prototype, {properties: {constructor: Greeter}});
 
-XDCC.prototype.match_private = function match_private(regex, cb) {
+Greeter.prototype.match_private = function match_private(regex, cb) {
   this.regexes_private.push([regex, cb]);
 };
 
-XDCC.prototype.match_public = function match_public(regex, cb) {
+Greeter.prototype.match_public = function match_public(regex, cb) {
   this.regexes_public.push([regex, cb]);
 };
 
-XDCC.prototype.match = function match(regex, cb) {
+Greeter.prototype.match = function match(regex, cb) {
   this.match_private(regex, cb);
   this.match_public(regex, cb);
 };
 
-var xdcc = new XDCC({
+var greeter = new Greeter({
+  server: {host: "127.0.0.1", port: 6667},
   channels: ["#channel"],
-  my_ip: "127.0.0.1",
 });
 
-xdcc.on("irc", function(message) {
+greeter.on("irc", function(message) {
   console.log(message);
 });
 
-var files = {
-  "10": "test.data",
-};
+greeter.match(/^(hey|hi|hello)/i, function(from, to, message, matches) {
+  var target = to;
 
-xdcc.match_private(/^xdcc send (\d+)/i, function(from, to, message, matches) {
-  if (!files[matches[1]]) {
-    xdcc.say(from.nick, "パック＃" + matches[1] + "がない");
-    return;
+  if (target.toLowerCase() === greeter.nickname.toLowerCase()) {
+    target = from;
   }
 
-  var server = net.createServer(function(c) {
-    fs.createReadStream(path.join(__dirname, files[matches[1]])).pipe(c);
-    server.close();
-  }).listen(null, xdcc.options.my_ip);
-
-  fs.stat(path.join(__dirname, files[matches[1]]), function(err, stats) {
-    xdcc.ctcp(from.nick, ["DCC", "SEND", files[matches[1]], ip_to_long(xdcc.options.my_ip), server.address().port, stats.size].join(" "));
-  });
+  greeter.say(target, "no, " + matches[1] + " to YOU, " + from.nick);
 });
