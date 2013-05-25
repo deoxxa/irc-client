@@ -49,6 +49,8 @@ var Client = module.exports = function Client(options) {
         this.join(channel[0], channel[1]);
       }
     }.bind(this));
+
+    this.emit("connected");
   }.bind(this));
 
   this.on("irc:ping", function(message) {
