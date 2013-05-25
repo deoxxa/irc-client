@@ -1,6 +1,5 @@
 var net = require("net"),
-    events = require("events"),
-    util = require("util");
+    events = require("events");
 
 var Protocol = require("irc-protocol");
 
@@ -83,7 +82,7 @@ var Client = module.exports = function Client(options) {
   this.serialiser.write({command: "NICK", parameters: [this.nickname]});
   this.serialiser.write({command: "USER", parameters: [this.username, 0, 0, this.realname]});
 };
-util.inherits(Client, events.EventEmitter);
+Client.prototype = Object.create(events.EventEmitter.prototype, {properties: {constructor: Client}});
 
 Client.prototype.join = function join(channel, password, cb) {
   if (typeof password === "function" && typeof cb === "undefined") {

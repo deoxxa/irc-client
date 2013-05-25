@@ -2,8 +2,7 @@
 
 var fs = require("fs"),
     net = require("net"),
-    path = require("path"),
-    util = require("util");
+    path = require("path");
 
 function ip_to_long(ip) {
   return ip.split(".").reduce(function(i, v) {
@@ -39,7 +38,7 @@ var XDCC = function XDCC() {
 
   this.transfers = [];
 };
-util.inherits(XDCC, Client);
+XDCC.prototype = Object.create(Client.prototype, {properties: {constructor: XDCC}});
 
 XDCC.prototype.match_private = function match_private(regex, cb) {
   this.regexes_private.push([regex, cb]);
