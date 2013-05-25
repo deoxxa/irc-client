@@ -27,13 +27,17 @@ var Client = module.exports = function Client(options) {
   this.socket.pipe(this.parser);
   this.serialiser.pipe(this.socket);
 
-  this.parser.on("data", function(message) {
-    this.emit("irc", message);
+  this.parser.on("readable", function() {
+    var message;
 
-    this.emit(["irc", message.command.toLowerCase()].join(":"), message);
+    while ((message = this.parser.read()) !== null) {
+      this.emit("irc", message);
 
-    if (Protocol.Numerics[message.command]) {
-      this.emit(["irc", Protocol.Numerics[message.command].toLowerCase()].join(":"), message);
+      this.emit(["irc", message.command.toLowerCase()].join(":"), message);
+
+      if (Protocol.Numerics[message.command]) {
+        this.emit(["irc", Protocol.Numerics[message.command].toLowerCase()].join(":"), message);
+      }
     }
   }.bind(this));
 
